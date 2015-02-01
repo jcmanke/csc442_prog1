@@ -25,6 +25,19 @@ bool PointProcesses::Menu_Point_Grayscale(Image &image)
 
 bool PointProcesses::Menu_Point_Negate(Image &image)
 {
+    for(unsigned int y = 0; y < image.Height(); y++)
+    {
+        for(unsigned int x = 0; x < image.Width(); x++)
+        {
+            Pixel pixel = image[y][x];
+
+            int red = 255 - pixel.Red();
+            int blue = 255 - pixel.Blue();
+            int green = 255 - pixel.Green();
+
+            image[y][x].SetRGB(red, green, blue);
+        }
+    }
     return true;
 }
 
