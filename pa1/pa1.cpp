@@ -10,7 +10,7 @@ Modifications:
 */
 
 // QtImageLib requires interface (qtip.h) as well as implementation (qtip.cpp)
-#include "qtip.h"
+#include "pa1.h"
 #include <iostream>
 #include <cmath>
 
