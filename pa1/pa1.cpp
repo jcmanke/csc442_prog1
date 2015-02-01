@@ -11,6 +11,15 @@ int main( int argc, char *argv[] )
 
 bool PointProcesses::Menu_Point_Grayscale(Image &image)
 {
+    for(unsigned int y = 0; y < image.Height(); y++)
+    {
+        for(unsigned int x = 0; x < image.Width(); x++)
+        {
+            Pixel pixel = image[y][x];
+            int gray = 0.3 * pixel.Red() + 0.59 * pixel.Green() + 0.11 * pixel.Blue();
+            image[y][x].SetGray(gray);
+        }
+    }
     return true;
 }
 
