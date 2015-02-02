@@ -6,6 +6,7 @@ class PointProcesses: public QObject
     Q_OBJECT;
 
   public slots:
+    //TODO split into several menus
     bool Menu_Point_Grayscale(Image &image);
     bool Menu_Point_Negate(Image &image);
     bool Menu_Point_BinaryThreshold(Image &image);

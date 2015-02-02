@@ -1,6 +1,5 @@
 #include "pa1.h"
 
-// main function will always follow this format
 int main( int argc, char *argv[] )
 {
     PointProcesses obj;
@@ -9,6 +8,11 @@ int main( int argc, char *argv[] )
     return app.Start();
 }
 
+/*
+ Author: Joe Manke
+
+ Converts an image to grayscale.
+ */
 bool PointProcesses::Menu_Point_Grayscale(Image &image)
 {
     for(unsigned int y = 0; y < image.Height(); y++)
@@ -23,6 +27,11 @@ bool PointProcesses::Menu_Point_Grayscale(Image &image)
     return true;
 }
 
+/*
+ Author: Joe Manke
+
+ Negates an image.
+ */
 bool PointProcesses::Menu_Point_Negate(Image &image)
 {
     for(unsigned int y = 0; y < image.Height(); y++)
@@ -81,8 +90,14 @@ bool PointProcesses::Menu_Point_ContinuousPseudocolor(Image &image)
     return true;
 }
 
+/*
+ Author: Joe Manke
+
+ Displays a histogram using the QtImageLib function.
+ */
 bool PointProcesses::Menu_Point_DisplayHistogram(Image &image)
 {
+    displayHistogram(image);
     return true;
 }
 
