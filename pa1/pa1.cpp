@@ -7,6 +7,7 @@ using namespace std;
 
 bool BinaryThreshold(Image &image, int threshold);
 bool Posterize(Image &image, int numLevels);
+bool Contrast(Image &image, int iMin, int iMax);
 int main( int argc, char *argv[] )
 {
     PointProcesses obj;
@@ -184,10 +185,22 @@ bool PointProcesses::Menu_Point_Brightness(Image &image)
         return false;
     }
 }
+/*
+ Author: Jonathan Tomes
+     Handles the menu operation for contrasting an image
+     getting the min and max values from the user
+     and sending it along to be processed.
+ */
 
 bool PointProcesses::Menu_Point_Contrast(Image &image)
 {
-    return true;
+    int iMin = 0;
+    int iMax = 255;
+    if(!Dialog("Contrast")
+        .Add(iMin, "Minium intensity", 0, 128)
+        .Add(iMax,"Maxium Intensity", 128, 255).Show())
+        return false;
+    return Contrast(image, iMin, iMax);
 }
 
 /*
@@ -466,11 +479,55 @@ bool PointProcesses::Menu_Point_AutomatedContrastStretch(Image &image)
 
     return true;
 }
-
+/*
+ Author: Jonathan Tomes
+     Handles the menu for the modified contrast stretch.
+ */
 bool PointProcesses::Menu_Point_ModifiedContrastStretch(Image &image)
 {
+    int iMin = 0;
+    int iMax = 255;
+    if(!Dialog("Modified Contrast Stretch")
+        .Add(iMin, "Minium intensity", 0, 128)
+        .Add(iMax,"Maxium Intensity", 128, 255).Show())
+        return false;
+    return Contrast(image, iMin, iMax);
+}
+/*
+ Author: Jonathan Tomes
+     A method to modify the contrast of an image
+     by doing a contrast by the given iMin and iMax.
+ */
+bool Contrast(Image &image, int iMin, int iMax)
+{
+    double scale = 255.0/(iMax - iMin);
+    uchar lut[256];
+
+    for(int i = 0; i < 256; i++)
+    {
+        int intensity = scale *(i - iMin);
+        if(intensity < 0)
+        {
+            intensity = 0;
+        }
+        if(intensity > 255)
+        {
+            intensity = 255;
+        }
+        lut[i] = intensity;
+    }
+
+    for(uint y = 0; y < image.Height(); y++)
+    {
+        for(uint x = 0; x < image.Width(); x++)
+        {
+            image[y][x] = lut[image[y][x].Intensity()];
+        }
+    }
+
     return true;
 }
+
 /*
  Author: Jonathan Tomes
      Performs a historgram equalization on an image.
