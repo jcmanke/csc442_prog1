@@ -567,9 +567,60 @@ bool PointProcesses::Menu_Point_HistogramEqualization(Image &image)
 
     return true;
 }
-
+/*
+ Author: Jonathan Tomes
+     Performs a historgram equalization on an image. Includes clipping off of
+     a number of pixels
+ */
 bool PointProcesses::Menu_Point_HistogramEqualizationWithClipping(Image &image)
 {
+    int clipPercent = 0;
+    if(!Dialog("Equalize with Clipping")
+        .Add(clipPercent,"Clip Ammount", 0, 100)
+        .Show())
+        return false;
+
+
+    vector<uint> histogram = image.Histogram();
+    uint CDF[256];
+    uint lut[256];
+    uint totalPixels = image.Height() * image.Width();
+    double clipAmmount = (1.0/(100-clipPercent)) * totalPixels;
+    for(int i = 0; i < 256; i++)
+    {
+        if(histogram[i] > clipAmmount)
+        {
+            histogram[i]= clipAmmount;
+        }
+    }
+    CDF[0] = histogram[0];
+    for(int i = 1; i < 256; i++)
+    {
+
+        CDF[i] = CDF[i-1] + histogram[i];
+    }
+
+    for(int i = 0; i < 256; i++)
+    {
+        lut[i] = CDF[i] * (255.0/totalPixels);
+        if(lut[i] > 255)
+        {
+            lut[i] = 255;
+        }
+        if(lut[i] < 0)
+        {
+            lut[i] = 0;
+        }
+    }
+
+    for(uint y = 0; y < image.Height(); y++)
+    {
+        for(uint x = 0; x < image.Width(); x++)
+        {
+            image[y][x] = lut[image[y][x]];
+        }
+    }
+
     return true;
 }
 
