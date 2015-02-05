@@ -131,7 +131,11 @@ bool PointProcesses::Menu_Point_Gamma(Image &image)
         return false;
     }
 }
+/*
+ Author: Jonathan Tomes
 
+     Adjusts the images intensity by a simple log function down into a meaningful range.
+ */
 bool PointProcesses::Menu_Point_Compress(Image &image)
 {
     int LUT[256];
@@ -154,7 +158,10 @@ bool PointProcesses::Menu_Point_Compress(Image &image)
     }
     return true;
 }
-
+/*
+ Author: Jonathan Tomes
+     Useses a discrete scale to artificially color an image.
+ */
 bool PointProcesses::Menu_Point_DiscretePseudocolor(Image &image)
 {
     int lut[256][3];
