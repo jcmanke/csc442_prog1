@@ -134,6 +134,24 @@ bool PointProcesses::Menu_Point_Gamma(Image &image)
 
 bool PointProcesses::Menu_Point_Compress(Image &image)
 {
+    int LUT[256];
+
+    for(int i = 0; i < 256; i++)
+    {
+        LUT[i] = log(i+1.0) * (255/log(256.0)) + 0.5;
+        if(LUT[i] > 255)
+            LUT[i] = 255;
+        if(LUT[i] < 0)
+            LUT[i] = 0;
+    }
+
+    for(unsigned int y = 0; y < image.Height(); y++)
+    {
+        for(unsigned int x = 0; x < image.Width(); x++)
+        {
+            image[y][x] = LUT[image[y][x]];
+        }
+    }
     return true;
 }
 
