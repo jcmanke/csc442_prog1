@@ -485,13 +485,53 @@ bool PointProcesses::Menu_Point_AutomatedContrastStretch(Image &image)
  */
 bool PointProcesses::Menu_Point_ModifiedContrastStretch(Image &image)
 {
-    int iMin = 0;
-    int iMax = 255;
+    double iMin = 0;
+    double iMax = 0;
     if(!Dialog("Modified Contrast Stretch")
-        .Add(iMin, "Minium intensity", 0, 128)
-        .Add(iMax,"Maxium Intensity", 128, 255).Show())
+        .Add(iMin, "Left Ignore", 0, 1.0)
+        .Add(iMax,"Right Ignore", 0, 1.0).Show())
         return false;
-    return Contrast(image, iMin, iMax);
+
+    vector<uint> histogram = image.Histogram();
+
+    uint min = 0, max = 0;
+    uint numLeftIgnore = iMin* (image.Width()*image.Height());
+    uint numRightIgnore = iMax*(image.Width()*image.Height());
+
+    //find minimum intensity
+    int i = 0;
+    uint sum = 0;
+    while(sum < numLeftIgnore && i < 256)
+    {
+        sum += histogram[i];
+        i++;
+    }
+    min = i;
+
+    //find maximum intensity
+    i = 255;
+    sum = 0;
+    while(sum< numRightIgnore && i >= 0)
+    {
+        sum += histogram[i];
+        i--;
+    }
+    max = i;
+
+    double scale = 255.0 / (max - min);
+
+    for(uint y = 0; y < image.Height(); y++)
+    {
+        for(uint x = 0; x < image.Width(); x++)
+        {
+            int intensity = image[y][x].Intensity();
+            intensity = scale * (intensity - min);
+            image[y][x].SetIntensity(intensity);
+        }
+    }
+
+
+    return true;
 }
 /*
  Author: Jonathan Tomes
@@ -574,9 +614,9 @@ bool PointProcesses::Menu_Point_HistogramEqualization(Image &image)
  */
 bool PointProcesses::Menu_Point_HistogramEqualizationWithClipping(Image &image)
 {
-    int clipPercent = 0;
+    double clipPercent = 0;
     if(!Dialog("Equalize with Clipping")
-        .Add(clipPercent,"Clip Ammount", 0, 100)
+        .Add(clipPercent,"Clip Ammount", 0, 1.0)
         .Show())
         return false;
 
@@ -585,7 +625,7 @@ bool PointProcesses::Menu_Point_HistogramEqualizationWithClipping(Image &image)
     uint CDF[256];
     uint lut[256];
     uint totalPixels = image.Height() * image.Width();
-    double clipAmmount = (1.0/(100-clipPercent)) * totalPixels;
+    double clipAmmount = clipPercent * totalPixels;
     for(int i = 0; i < 256; i++)
     {
         if(histogram[i] > clipAmmount)
