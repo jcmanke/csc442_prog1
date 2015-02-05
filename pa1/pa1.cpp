@@ -8,6 +8,8 @@ using namespace std;
 bool BinaryThreshold(Image &image, int threshold);
 bool Posterize(Image &image, int numLevels);
 bool Contrast(Image &image, int iMin, int iMax);
+bool DeRed(Image &image, double percent);
+
 int main( int argc, char *argv[] )
 {
     PointProcesses obj;
@@ -666,5 +668,41 @@ bool PointProcesses::Menu_Point_HistogramEqualizationWithClipping(Image &image)
 
 bool PointProcesses::Menu_Point_TodoPickAnotherOne(Image &image)
 {
+    return true;
+}
+
+bool PointProcesses::Menu_Point_DeRed(Image &image)
+{
+    double percent = 0;
+    if(!Dialog("De-Red")
+        .Add(percent, "Percent of red to remove from image", 0, 1.00)
+        .Show())
+        return false;
+
+    return DeRed(image, percent);
+}
+
+bool DeRed(Image &image, double percent)
+{
+    uchar lut[256];
+
+    for(int i = 0; i < 256; i++)
+    {
+        int red = i - (i* percent) + 0.5;
+        if(red<0)
+            red = 0;
+        if(red>255)
+            red = 255;
+        lut[i] = red;
+    }
+
+    for(uint y = 0; y < image.Height(); y++)
+    {
+        for(uint x = 0; x < image.Width(); x++)
+        {
+            int red = image[y][x].Red();
+            image[y][x].SetRed(lut[red]);
+        }
+    }
     return true;
 }

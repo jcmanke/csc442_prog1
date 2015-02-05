@@ -23,4 +23,5 @@ class PointProcesses: public QObject
     bool Menu_Point_HistogramEqualization(Image &image);
     bool Menu_Point_HistogramEqualizationWithClipping(Image &image);
     bool Menu_Point_TodoPickAnotherOne(Image &image);
+    bool Menu_Point_DeRed(Image &image);
 };
