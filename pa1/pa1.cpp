@@ -237,6 +237,13 @@ bool PointProcesses::Menu_Point_DiscretePseudocolor(Image &image)
     return true;
 }
 
+/*
+ Author: Jonathan Tomes
+     Colors an image using a continous coloring method.
+     Blue starts high and ramps low
+     Red is a triangle about the center
+     and green starts low and ramps high.
+*/
 bool PointProcesses::Menu_Point_ContinuousPseudocolor(Image &image)
 {
     int lutR[256];
@@ -377,9 +384,43 @@ bool PointProcesses::Menu_Point_ModifiedContrastStretch(Image &image)
 {
     return true;
 }
-
+/*
+ Author: Jonathan Tomes
+     Performs a historgram equalization on an image.
+ */
 bool PointProcesses::Menu_Point_HistogramEqualization(Image &image)
 {
+    vector<uint> histogram = image.Histogram();
+    uint CDF[256];
+    uint lut[256];
+    uint totalPixels = image.Height() * image.Width();
+    CDF[0] = histogram[0];
+    for(int i = 1; i < 256; i++)
+    {
+        CDF[i] = CDF[i-1] + histogram[i];
+    }
+
+    for(int i = 0; i < 256; i++)
+    {
+        lut[i] = CDF[i] * (255.0/totalPixels);
+        if(lut[i] > 255)
+        {
+            lut[i] = 255;
+        }
+        if(lut[i] < 0)
+        {
+            lut[i] = 0;
+        }
+    }
+
+    for(uint y = 0; y < image.Height(); y++)
+    {
+        for(uint x = 0; x < image.Width(); x++)
+        {
+            image[y][x] = lut[image[y][x]];
+        }
+    }
+
     return true;
 }
 
