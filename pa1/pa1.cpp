@@ -239,6 +239,89 @@ bool PointProcesses::Menu_Point_DiscretePseudocolor(Image &image)
 
 bool PointProcesses::Menu_Point_ContinuousPseudocolor(Image &image)
 {
+    int lutR[256];
+    int lutG[256];
+    int lutB[256];
+
+    lutR[0] = 0;
+    lutG[0] = 0;
+    lutB[0] = 0;
+
+
+
+    // set the remaining blue value
+    int blue = 255;
+    for(int i = 1; i < 126; i++)
+    {
+        lutB[i] = blue;
+        blue -= 2;
+        if(blue < 0)
+        {
+            blue = 0;
+        }
+    }
+    for(int i = 126; i < 255; i++)
+    {
+        lutB[i] = 0;
+    }
+
+    // Set up the Reds
+    int red = 1;
+    for(int i = 0; i < 128; i++)
+    {
+        lutR[i] = red;
+        red += 2;
+        if(red > 255)
+        {
+            red = 255;
+        }
+    }
+
+    red = 255;
+    for(int i = 128; i < 255; i++)
+    {
+        lutR[i] = 255;
+        red -= 2;
+        if(red < 0)
+        {
+            red = 0;
+        }
+    }
+
+    // set the Greens
+    for(int i =1; i < 130; i++)
+    {
+        lutG[i] = 0;
+    }
+    int green = 0;
+    for(int i = 130; i < 255; i++)
+    {
+        lutG[i] = green;
+        green += 2;
+        if(green > 255)
+        {
+            green = 255;
+        }
+    }
+
+    // Make the highest value white
+    lutR[255] = 255;
+    lutG[255] = 255;
+    lutB[255] = 255;
+
+    for(uint y = 0; y < image.Height(); y++)
+    {
+        for(uint x = 0; x < image.Width(); x++)
+        {
+            int intensity = image[y][x].Intensity();
+
+            uchar red = lutR[intensity];
+            uchar green = lutG[intensity];
+            uchar blue = lutB[intensity];
+
+            image[y][x].SetRGB(red, green, blue);
+        }
+    }
     return true;
 }
 
