@@ -157,6 +157,76 @@ bool PointProcesses::Menu_Point_Compress(Image &image)
 
 bool PointProcesses::Menu_Point_DiscretePseudocolor(Image &image)
 {
+    int lut[256][3];
+    int i = 0;
+    for(; i < 32; i++)
+    {
+        lut[i][0]= 0;
+        lut[i][1]= 0;
+        lut[i][2]= 0;
+    }
+
+    for(; i< 64; i++)
+    {
+        lut[i][0]=0;
+        lut[i][1]=0;
+        lut[i][2]=255;
+    }
+
+    for(; i < 96; i++)
+    {
+        lut[i][0]= 128;
+        lut[i][1]= 0;
+        lut[i][2]= 128;
+    }
+
+    for(; i < 128; i++)
+    {
+        lut[i][0] = 255;
+        lut[i][1] = 0;
+        lut[i][2] = 0;
+    }
+
+    for(; i < 160; i++)
+    {
+        lut[i][0] = 0;
+        lut[i][1] = 128;
+        lut[i][2] = 128;
+    }
+
+    for(; i < 192; i++)
+    {
+        lut[i][0] = 0;
+        lut[i][1] = 255;
+        lut[i][2] = 0;
+    }
+
+    for(; i < 224; i++)
+    {
+        lut[i][0] = 255;
+        lut[i][1] = 255;
+        lut[i][2] = 0;
+    }
+
+    for(; i < 256; i++)
+    {
+        lut[i][0] = 255;
+        lut[i][1] = 255;
+        lut[i][2] = 255;
+    }
+
+    for(unsigned int y = 0; y < image.Height(); y++)
+    {
+        for(unsigned int x = 0; x < image.Height(); x++)
+        {
+            unsigned char red = lut[image[y][x]][0];
+            unsigned char green = lut[image[y][x]][1];
+            unsigned char blue = lut[image[y][x]][2];
+
+            image[y][x].SetRGB(red, green, blue);
+        }
+    }
+
     return true;
 }
 
