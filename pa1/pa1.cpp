@@ -6,6 +6,7 @@
 using namespace std;
 
 bool BinaryThreshold(Image &image, int threshold);
+bool Posterize(Image &image, int numLevels);
 int main( int argc, char *argv[] )
 {
     PointProcesses obj;
@@ -97,9 +98,56 @@ bool BinaryThreshold(Image &image, int threshold)
     }
     return true;
 }
-
+/*
+ Author: Jonathan Tomes
+     Handles the menu for posterize, passing the number of levels
+     to the posterize function.
+ */
 bool PointProcesses::Menu_Point_Posterize(Image &image)
 {
+    int numLevels = 2;
+    if(!Dialog("Posterize")
+        .Add(numLevels, "Number of Levels", 2, 32).Show())
+        return false;
+
+    return Posterize(image, numLevels);
+}
+/*
+ Author: Jonathan Tomes
+     Handels the actual posterizing of an image.
+ */
+bool Posterize(Image &image, int numLevels)
+{
+    int numberPerLevel = 256.0/numLevels;
+
+    int scale = 0;
+    uchar lut[256];
+    int count = 0;
+
+    // initialize lut to 255.
+
+    for(int i = 0; i < 256; i++)
+    {
+        lut[i] = 255;
+    }
+
+    for(int i = 0; i < numLevels; i++)
+    {
+        for(int j = 0; j < numberPerLevel; j++)
+        {
+            lut[count] = scale;
+            count++;
+        }
+        scale += numberPerLevel;
+    }
+
+    for(uint y = 0; y < image.Height(); y++)
+    {
+        for(uint x = 0; x < image.Width(); x++)
+        {
+            image[y][x] = lut[image[y][x]];
+        }
+    }
     return true;
 }
 
