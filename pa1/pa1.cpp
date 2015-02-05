@@ -2,8 +2,10 @@
 #include <cmath>
 #include <vector>
 
+
 using namespace std;
 
+bool BinaryThreshold(Image &image, int threshold);
 int main( int argc, char *argv[] )
 {
     PointProcesses obj;
@@ -53,9 +55,46 @@ bool PointProcesses::Menu_Point_Negate(Image &image)
     }
     return true;
 }
-
+/*
+ Author: Jonathan Tomes
+     Handles the menu for binary thresholding and passes
+     it on to a method.
+ */
 bool PointProcesses::Menu_Point_BinaryThreshold(Image &image)
 {
+    int threshold = 0;
+    if(!Dialog("Binary Threshold").Add(threshold,"Threshold Value", 0, 255).Show())
+        return false;
+
+
+    return BinaryThreshold(image, threshold);
+}
+/*
+ Author: Jonathan Tomes
+     Sets the intensity for values below a threshold to zero
+     and at the threshold and above to 255;
+ */
+bool BinaryThreshold(Image &image, int threshold)
+{
+    uchar lut[256];
+
+    for(int i = 0; i<threshold; i++)
+    {
+        lut[i] = 0;
+    }
+
+    for(int i = threshold; i < 256; i++)
+    {
+        lut[i] = 255;
+    }
+
+    for(uint y =0; y < image.Height(); y++)
+    {
+        for(uint x = 0; x < image.Width(); x++)
+        {
+            image[y][x] = lut[image[y][x]];
+        }
+    }
     return true;
 }
 
