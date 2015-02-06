@@ -1,6 +1,14 @@
 #pragma once
 #include <qtimagelib.h>
 
+/*
+ File: pa1.h
+ Authors: Joe Manke, Jonathan Tomes
+ Description:
+     The header file for programing assignment number 1.
+     Contains the necessary information for Qt and qtimagelib
+     to create the menu and interface for the program.
+ */
 class PointProcesses: public QObject
 {
     Q_OBJECT;

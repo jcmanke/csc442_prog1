@@ -1,7 +1,28 @@
+/*
+ Program: Point Image Processor
+ For: CSC442, Spring 2015
+ Professor: Dr. Weiss
+ Authors: Joe Manke, Jonathan Tomes
+
+ Description:
+     Use qtimage lib to creat a GUI image manipulation program.
+ Has the ability to perform several point process manipulations on images.
+
+
+ */
+
 #include "pa1.h"
 #include <cmath>
 #include <vector>
 
+/*
+ File: pa1.cpp
+ Authors: Joe Manke, Jonathan Tomes
+
+ Description:
+     The main file and processes for the program. Handles logic behind the
+     menu items.
+ */
 
 using namespace std;
 
@@ -60,9 +81,15 @@ bool PointProcesses::Menu_Color_Negate(Image &image)
     return true;
 }
 /*
+ Function: Menu_Intensitiy_BinaryThreshold
  Author: Jonathan Tomes
+
+ Description:
      Handles the menu for binary thresholding and passes
      it on to a method.
+
+ in & out:
+    image - the image to manipulate.
  */
 bool PointProcesses::Menu_Intensity_BinaryThreshold(Image &image)
 {
@@ -75,9 +102,17 @@ bool PointProcesses::Menu_Intensity_BinaryThreshold(Image &image)
 }
 
 /*
+ Function: BinaryThreshold
  Author: Jonathan Tomes
+
+ Description:
+     Actual logic for the binary threshold manipulation.
      Sets the intensity for values below a threshold to zero
      and at the threshold and above to 255;
+ in & out:
+     image - the image to manipulate
+ in:
+     threshold - the cutoff intensity level
  */
 bool BinaryThreshold(Image &image, int threshold)
 {
@@ -103,9 +138,13 @@ bool BinaryThreshold(Image &image, int threshold)
     return true;
 }
 /*
+ Function:Menu_Other-Posterize
  Author: Jonathan Tomes
+ Description:
      Handles the menu for posterize, passing the number of levels
      to the posterize function.
+ in & out:
+     image - the image to manipulate.
  */
 bool PointProcesses::Menu_Other_Posterize(Image &image)
 {
@@ -117,8 +156,12 @@ bool PointProcesses::Menu_Other_Posterize(Image &image)
     return Posterize(image, numLevels);
 }
 /*
+ Function: Posterize
  Author: Jonathan Tomes
+ Description:
      Handels the actual posterizing of an image.
+ in & out:
+     image - the image to manipulate
  */
 bool Posterize(Image &image, int numLevels)
 {
@@ -189,10 +232,14 @@ bool PointProcesses::Menu_Color_Brighten(Image &image)
     }
 }
 /*
+ Function: Menu_Intensity_Contrast
  Author: Jonathan Tomes
+ Description:
      Handles the menu operation for contrasting an image
      getting the min and max values from the user
      and sending it along to be processed.
+  in & out:
+    image - the image to manipulate
  */
 
 bool PointProcesses::Menu_Intensity_Contrast(Image &image)
@@ -236,9 +283,12 @@ bool PointProcesses::Menu_Intensity_Gamma(Image &image)
 }
 
 /*
+ Function: Menu_Intensity_Compress
  Author: Jonathan Tomes
-
+ Description:
      Adjusts the images intensity by a simple log function down into a meaningful range.
+ in & out:
+    image - the image to manipulate
  */
 bool PointProcesses::Menu_Intensity_Compress(Image &image)
 {
@@ -264,8 +314,12 @@ bool PointProcesses::Menu_Intensity_Compress(Image &image)
 }
 
 /*
+ Function: Menu_Color_DiscretePseudocolor
  Author: Jonathan Tomes
+ Description:
      Uses a discrete scale to artificially color an image.
+ in & out:
+    image - the image being manipulated.
  */
 bool PointProcesses::Menu_Color_DiscretePseudocolor(Image &image)
 {
@@ -343,11 +397,15 @@ bool PointProcesses::Menu_Color_DiscretePseudocolor(Image &image)
 }
 
 /*
+ Function: Menu_Color_ContinuousPseudocolor
  Author: Jonathan Tomes
+ Description:
      Colors an image using a continous coloring method.
      Blue starts high and ramps low
      Red is a triangle about the center
      and green starts low and ramps high.
+ in & out:
+     image - the image being manipulated.
 */
 bool PointProcesses::Menu_Color_ContinuousPseudocolor(Image &image)
 {
@@ -485,8 +543,12 @@ bool PointProcesses::Menu_Intensity_AutomatedContrastStretch(Image &image)
     return true;
 }
 /*
+ Function: Menu_Intensity_ModifiedContrastStretch
  Author: Jonathan Tomes
+ Description:
      Handles the menu for the modified contrast stretch.
+ in & out:
+    image - the image being manipulated.
  */
 bool PointProcesses::Menu_Intensity_ModifiedContrastStretch(Image &image)
 {
@@ -539,9 +601,13 @@ bool PointProcesses::Menu_Intensity_ModifiedContrastStretch(Image &image)
     return true;
 }
 /*
+ Function: Contrast
  Author: Jonathan Tomes
+ Description:
      A method to modify the contrast of an image
      by doing a contrast by the given iMin and iMax.
+ in & out:
+     image - the image being manipulated.
  */
 bool Contrast(Image &image, int iMin, int iMax)
 {
@@ -574,8 +640,12 @@ bool Contrast(Image &image, int iMin, int iMax)
 }
 
 /*
+ Function: Menu_Intensity_HistogramEqualization
  Author: Jonathan Tomes
-     Performs a historgram equalization on an image.
+ Description:
+    Performs a historgram equalization on an image.
+ in & out:
+    image - the image being manipulated.
  */
 bool PointProcesses::Menu_Intensity_HistogramEqualization(Image &image)
 {
@@ -613,9 +683,13 @@ bool PointProcesses::Menu_Intensity_HistogramEqualization(Image &image)
     return true;
 }
 /*
+ Function: Menu_Intensity_HistogramEqualizationWithClipping
  Author: Jonathan Tomes
+ Description:
      Performs a historgram equalization on an image. Includes clipping off of
      a number of pixels
+ in & out:
+    image - the image being manipulated.
  */
 bool PointProcesses::Menu_Intensity_HistogramEqualizationWithClipping(Image &image)
 {
@@ -672,9 +746,14 @@ bool PointProcesses::Menu_Intensity_HistogramEqualizationWithClipping(Image &ima
 }
 
 /*
- Author: Jonathon Tomes, Joe Manke
-
- Removes a percentage of Red, Green, and Blue from an image.
+ Function: Menu_Color_Decolorize
+ Authors: Jonathon Tomes, Joe Manke
+ Description:
+    Handles the menu logic for the Decolorize function.
+    Retrieves the percentages of red, green and blue values
+    to be removed from the image from the user.
+ in & out:
+    image - the image being manipulated.
  */
 bool PointProcesses::Menu_Color_Decolorize(Image &image)
 {
@@ -688,7 +767,18 @@ bool PointProcesses::Menu_Color_Decolorize(Image &image)
 
     return Decolorize(image, percentRed, percentGreen, percentBlue);
 }
-
+/*
+ Function: Decolorize
+ Authors: Jonathan Tomes, Joe Manke
+ Description:
+     Actual logic for decolorizing an image.
+ in & out:
+     image - the image being manipulated.
+ in:
+     percentRed - percentage of red to remove.
+     percentGreen - percentage of green to remove.
+     percentBlue - percentage of blue to remove.
+ */
 bool Decolorize(Image &image, double percentRed, double percentGreen, double percentBlue)
 {
     for(uint y = 0; y < image.Height(); y++)
