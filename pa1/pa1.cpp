@@ -631,12 +631,14 @@ bool PointProcesses::Menu_Intensity_HistogramEqualizationWithClipping(Image &ima
     uint lut[256];
     uint totalPixels = image.Height() * image.Width();
     double clipAmmount = clipPercent * totalPixels;
+    uint newTotal = 0;
     for(int i = 0; i < 256; i++)
     {
         if(histogram[i] > clipAmmount)
         {
             histogram[i]= clipAmmount;
         }
+        newTotal += histogram[i];
     }
     CDF[0] = histogram[0];
     for(int i = 1; i < 256; i++)
@@ -647,7 +649,7 @@ bool PointProcesses::Menu_Intensity_HistogramEqualizationWithClipping(Image &ima
 
     for(int i = 0; i < 256; i++)
     {
-        lut[i] = CDF[i] * (255.0/totalPixels);
+        lut[i] = CDF[i] * (255.0/newTotal);
         if(lut[i] > 255)
         {
             lut[i] = 255;
