@@ -22,5 +22,5 @@ class PointProcesses: public QObject
     bool Menu_Point_ModifiedContrastStretch(Image &image);
     bool Menu_Point_HistogramEqualization(Image &image);
     bool Menu_Point_HistogramEqualizationWithClipping(Image &image);
-    bool Menu_Point_DeRed(Image &image);
+    bool Menu_Point_Decolorize(Image &image);
 };

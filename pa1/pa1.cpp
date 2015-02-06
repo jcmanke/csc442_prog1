@@ -8,7 +8,7 @@ using namespace std;
 bool BinaryThreshold(Image &image, int threshold);
 bool Posterize(Image &image, int numLevels);
 bool Contrast(Image &image, int iMin, int iMax);
-bool DeRed(Image &image, double percent);
+bool Decolorize(Image &image, double percentRed, double percentGreen, double percentBlue);
 
 int main( int argc, char *argv[] )
 {
@@ -328,7 +328,7 @@ bool PointProcesses::Menu_Point_DiscretePseudocolor(Image &image)
 
     for(unsigned int y = 0; y < image.Height(); y++)
     {
-        for(unsigned int x = 0; x < image.Height(); x++)
+        for(unsigned int x = 0; x < image.Width(); x++)
         {
             unsigned char red = lut[image[y][x]][0];
             unsigned char green = lut[image[y][x]][1];
@@ -668,37 +668,37 @@ bool PointProcesses::Menu_Point_HistogramEqualizationWithClipping(Image &image)
     return true;
 }
 
-bool PointProcesses::Menu_Point_DeRed(Image &image)
+/*
+ Author: Jonathon Tomes, Joe Manke
+
+ Removes a percentage of Red, Green, and Blue from an image.
+ */
+bool PointProcesses::Menu_Point_Decolorize(Image &image)
 {
-    double percent = 0;
-    if(!Dialog("De-Red")
-        .Add(percent, "Percent of red to remove from image", 0, 1.00)
+    double percentRed = 0, percentGreen = 0, percentBlue = 0;
+    if(!Dialog("Decolorize")
+        .Add(percentRed, "Percent of red to remove from image", 0, 1.00)
+        .Add(percentGreen, "Percent of green to remove from image", 0, 1.00)
+        .Add(percentBlue, "Percent of blue to remove from image", 0, 1.00)
         .Show())
         return false;
 
-    return DeRed(image, percent);
+    return Decolorize(image, percentRed, percentGreen, percentBlue);
 }
 
-bool DeRed(Image &image, double percent)
+bool Decolorize(Image &image, double percentRed, double percentGreen, double percentBlue)
 {
-    uchar lut[256];
-
-    for(int i = 0; i < 256; i++)
-    {
-        int red = i - (i* percent) + 0.5;
-        if(red<0)
-            red = 0;
-        if(red>255)
-            red = 255;
-        lut[i] = red;
-    }
-
     for(uint y = 0; y < image.Height(); y++)
     {
         for(uint x = 0; x < image.Width(); x++)
         {
-            int red = image[y][x].Red();
-            image[y][x].SetRed(lut[red]);
+            Pixel pixel = image[y][x];
+
+            uchar red = pixel.Red() * (1.0 - percentRed);
+            uchar green = pixel.Green() * (1.0 - percentGreen);
+            uchar blue = pixel.Blue() * (1.0 - percentBlue);
+
+            image[y][x].SetRGB(red, green, blue);
         }
     }
     return true;
