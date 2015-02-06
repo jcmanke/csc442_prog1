@@ -6,21 +6,22 @@ class PointProcesses: public QObject
     Q_OBJECT;
 
   public slots:
-    //TODO split into several menus
-    bool Menu_Point_Grayscale(Image &image);
-    bool Menu_Point_Negate(Image &image);
-    bool Menu_Point_BinaryThreshold(Image &image);
-    bool Menu_Point_Posterize(Image &image);
-    bool Menu_Point_Brightness(Image &image);
-    bool Menu_Point_Contrast(Image &image);
-    bool Menu_Point_Gamma(Image &image);
-    bool Menu_Point_Compress(Image &image);
-    bool Menu_Point_DiscretePseudocolor(Image &image);
-    bool Menu_Point_ContinuousPseudocolor(Image &image);
-    bool Menu_Point_DisplayHistogram(Image &image);
-    bool Menu_Point_AutomatedContrastStretch(Image &image);
-    bool Menu_Point_ModifiedContrastStretch(Image &image);
-    bool Menu_Point_HistogramEqualization(Image &image);
-    bool Menu_Point_HistogramEqualizationWithClipping(Image &image);
-    bool Menu_Point_Decolorize(Image &image);
+    bool Menu_Color_Grayscale(Image &image);
+    bool Menu_Color_Negate(Image &image);
+    bool Menu_Color_Brighten(Image &image);
+    bool Menu_Color_DiscretePseudocolor(Image &image);
+    bool Menu_Color_ContinuousPseudocolor(Image &image);
+    bool Menu_Color_Decolorize(Image &image);
+
+    bool Menu_Intensity_BinaryThreshold(Image &image);
+    bool Menu_Intensity_Contrast(Image &image);
+    bool Menu_Intensity_AutomatedContrastStretch(Image &image);
+    bool Menu_Intensity_ModifiedContrastStretch(Image &image);
+    bool Menu_Intensity_Gamma(Image &image);
+    bool Menu_Intensity_Compress(Image &image);
+    bool Menu_Intensity_HistogramEqualization(Image &image);
+    bool Menu_Intensity_HistogramEqualizationWithClipping(Image &image);
+
+    bool Menu_Other_Posterize(Image &image);
+    bool Menu_Other_DisplayHistogram(Image &image);
 };

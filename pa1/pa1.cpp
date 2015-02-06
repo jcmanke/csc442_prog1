@@ -23,7 +23,7 @@ int main( int argc, char *argv[] )
 
  Converts an image to grayscale.
  */
-bool PointProcesses::Menu_Point_Grayscale(Image &image)
+bool PointProcesses::Menu_Color_Grayscale(Image &image)
 {
     for(unsigned int y = 0; y < image.Height(); y++)
     {
@@ -42,7 +42,7 @@ bool PointProcesses::Menu_Point_Grayscale(Image &image)
 
  Negates an image.
  */
-bool PointProcesses::Menu_Point_Negate(Image &image)
+bool PointProcesses::Menu_Color_Negate(Image &image)
 {
     for(uint y = 0; y < image.Height(); y++)
     {
@@ -64,7 +64,7 @@ bool PointProcesses::Menu_Point_Negate(Image &image)
      Handles the menu for binary thresholding and passes
      it on to a method.
  */
-bool PointProcesses::Menu_Point_BinaryThreshold(Image &image)
+bool PointProcesses::Menu_Intensity_BinaryThreshold(Image &image)
 {
     int threshold = 0;
     if(!Dialog("Binary Threshold").Add(threshold,"Threshold Value", 0, 255).Show())
@@ -73,6 +73,7 @@ bool PointProcesses::Menu_Point_BinaryThreshold(Image &image)
 
     return BinaryThreshold(image, threshold);
 }
+
 /*
  Author: Jonathan Tomes
      Sets the intensity for values below a threshold to zero
@@ -106,7 +107,7 @@ bool BinaryThreshold(Image &image, int threshold)
      Handles the menu for posterize, passing the number of levels
      to the posterize function.
  */
-bool PointProcesses::Menu_Point_Posterize(Image &image)
+bool PointProcesses::Menu_Other_Posterize(Image &image)
 {
     int numLevels = 2;
     if(!Dialog("Posterize")
@@ -160,7 +161,7 @@ bool Posterize(Image &image, int numLevels)
  Adjusts an image's brightness by adding a value provided by the user to each
     pixel's RGB values.
  */
-bool PointProcesses::Menu_Point_Brightness(Image &image)
+bool PointProcesses::Menu_Color_Brighten(Image &image)
 {
     int brighten = 20;
 
@@ -194,7 +195,7 @@ bool PointProcesses::Menu_Point_Brightness(Image &image)
      and sending it along to be processed.
  */
 
-bool PointProcesses::Menu_Point_Contrast(Image &image)
+bool PointProcesses::Menu_Intensity_Contrast(Image &image)
 {
     int iMin = 0;
     int iMax = 255;
@@ -211,7 +212,7 @@ bool PointProcesses::Menu_Point_Contrast(Image &image)
  Adjusts the image's intensity to by exponentiating each pixel's intensity
     by a gamma value provided by the user.
  */
-bool PointProcesses::Menu_Point_Gamma(Image &image)
+bool PointProcesses::Menu_Intensity_Gamma(Image &image)
 {
     double gamma = 0.5;
 
@@ -239,7 +240,7 @@ bool PointProcesses::Menu_Point_Gamma(Image &image)
 
      Adjusts the images intensity by a simple log function down into a meaningful range.
  */
-bool PointProcesses::Menu_Point_Compress(Image &image)
+bool PointProcesses::Menu_Intensity_Compress(Image &image)
 {
     int LUT[256];
 
@@ -264,9 +265,9 @@ bool PointProcesses::Menu_Point_Compress(Image &image)
 
 /*
  Author: Jonathan Tomes
-     Useses a discrete scale to artificially color an image.
+     Uses a discrete scale to artificially color an image.
  */
-bool PointProcesses::Menu_Point_DiscretePseudocolor(Image &image)
+bool PointProcesses::Menu_Color_DiscretePseudocolor(Image &image)
 {
     int lut[256][3];
     int i = 0;
@@ -348,7 +349,7 @@ bool PointProcesses::Menu_Point_DiscretePseudocolor(Image &image)
      Red is a triangle about the center
      and green starts low and ramps high.
 */
-bool PointProcesses::Menu_Point_ContinuousPseudocolor(Image &image)
+bool PointProcesses::Menu_Color_ContinuousPseudocolor(Image &image)
 {
     int lutR[256];
     int lutG[256];
@@ -441,7 +442,7 @@ bool PointProcesses::Menu_Point_ContinuousPseudocolor(Image &image)
 
  Displays a histogram using the QtImageLib function.
  */
-bool PointProcesses::Menu_Point_DisplayHistogram(Image &image)
+bool PointProcesses::Menu_Other_DisplayHistogram(Image &image)
 {
     displayHistogram(image);
     return true;
@@ -453,7 +454,7 @@ bool PointProcesses::Menu_Point_DisplayHistogram(Image &image)
  Performs an automated contrast stretch by scaling each pixel's intensity value
     to relative to the minimum and maximum intensities of the entire image.
  */
-bool PointProcesses::Menu_Point_AutomatedContrastStretch(Image &image)
+bool PointProcesses::Menu_Intensity_AutomatedContrastStretch(Image &image)
 {
     vector<uint> histogram = image.Histogram();
 
@@ -487,7 +488,7 @@ bool PointProcesses::Menu_Point_AutomatedContrastStretch(Image &image)
  Author: Jonathan Tomes
      Handles the menu for the modified contrast stretch.
  */
-bool PointProcesses::Menu_Point_ModifiedContrastStretch(Image &image)
+bool PointProcesses::Menu_Intensity_ModifiedContrastStretch(Image &image)
 {
     double iMin = 0;
     double iMax = 0;
@@ -576,7 +577,7 @@ bool Contrast(Image &image, int iMin, int iMax)
  Author: Jonathan Tomes
      Performs a historgram equalization on an image.
  */
-bool PointProcesses::Menu_Point_HistogramEqualization(Image &image)
+bool PointProcesses::Menu_Intensity_HistogramEqualization(Image &image)
 {
     vector<uint> histogram = image.Histogram();
     uint CDF[256];
@@ -616,7 +617,7 @@ bool PointProcesses::Menu_Point_HistogramEqualization(Image &image)
      Performs a historgram equalization on an image. Includes clipping off of
      a number of pixels
  */
-bool PointProcesses::Menu_Point_HistogramEqualizationWithClipping(Image &image)
+bool PointProcesses::Menu_Intensity_HistogramEqualizationWithClipping(Image &image)
 {
     double clipPercent = 0;
     if(!Dialog("Equalize with Clipping")
@@ -673,7 +674,7 @@ bool PointProcesses::Menu_Point_HistogramEqualizationWithClipping(Image &image)
 
  Removes a percentage of Red, Green, and Blue from an image.
  */
-bool PointProcesses::Menu_Point_Decolorize(Image &image)
+bool PointProcesses::Menu_Color_Decolorize(Image &image)
 {
     double percentRed = 0, percentGreen = 0, percentBlue = 0;
     if(!Dialog("Decolorize")
