@@ -221,7 +221,7 @@ bool PointProcesses::Menu_Point_Gamma(Image &image)
         {
             for(uint x = 0; x < image.Width(); x++)
             {
-                int intensity = pow(image[y][x].Intensity(), gamma);
+                int intensity = pow(image[y][x].Intensity() / 255.0, gamma) * 255;
                 image[y][x].SetIntensity(intensity);
             }
         }
@@ -233,6 +233,7 @@ bool PointProcesses::Menu_Point_Gamma(Image &image)
         return false;
     }
 }
+
 /*
  Author: Jonathan Tomes
 
@@ -260,6 +261,7 @@ bool PointProcesses::Menu_Point_Compress(Image &image)
     }
     return true;
 }
+
 /*
  Author: Jonathan Tomes
      Useses a discrete scale to artificially color an image.
@@ -663,11 +665,6 @@ bool PointProcesses::Menu_Point_HistogramEqualizationWithClipping(Image &image)
         }
     }
 
-    return true;
-}
-
-bool PointProcesses::Menu_Point_TodoPickAnotherOne(Image &image)
-{
     return true;
 }
 
