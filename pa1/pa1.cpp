@@ -40,9 +40,12 @@ int main( int argc, char *argv[] )
 }
 
 /*
+ Function: Menu_Color_Grayscale
  Author: Joe Manke
-
- Converts an image to grayscale.
+ Description:
+    Converts an image to grayscale.
+ in & out:
+    image - the image being manipulated.
  */
 bool PointProcesses::Menu_Color_Grayscale(Image &image)
 {
@@ -59,9 +62,12 @@ bool PointProcesses::Menu_Color_Grayscale(Image &image)
 }
 
 /*
+ Function: Menu_Color_Negate
  Author: Joe Manke
-
- Negates an image.
+ Description:
+    Negates an image.
+ in & out:
+    image - the image being manipulated.
  */
 bool PointProcesses::Menu_Color_Negate(Image &image)
 {
@@ -82,10 +88,13 @@ bool PointProcesses::Menu_Color_Negate(Image &image)
 }
 
 /*
+ Function: Menu_Color_Brighten
  Author: Joe Manke
-
- Adjusts an image's brightness by adding a value provided by the user to each
+ Description:
+    Adjusts an image's brightness by adding a value provided by the user to each
     pixel's RGB values.
+ in & out:
+    image - the image being manipulated.
  */
 bool PointProcesses::Menu_Color_Brighten(Image &image)
 {
@@ -467,10 +476,13 @@ bool Contrast(Image &image, int iMin, int iMax)
 }
 
 /*
+ Function: Menu_Intensity_AutomatedContrastStretch
  Author: Joe Manke
-
- Performs an automated contrast stretch by scaling each pixel's intensity value
+ Description:
+    Performs an automated contrast stretch by scaling each pixel's intensity value
     to relative to the minimum and maximum intensities of the entire image.
+ in & out:
+    image - the image being manipulated.
  */
 bool PointProcesses::Menu_Intensity_AutomatedContrastStretch(Image &image)
 {
@@ -563,10 +575,13 @@ bool PointProcesses::Menu_Intensity_ModifiedContrastStretch(Image &image)
 }
 
 /*
+ Function: Menu_Intensity_Gamma
  Author: Joe Manke
-
- Adjusts the image's intensity to by exponentiating each pixel's intensity
+ Description:
+    Adjusts the image's intensity to by exponentiating each pixel's intensity
     by a gamma value provided by the user.
+ in & out:
+    image - the image being manipulated.
  */
 bool PointProcesses::Menu_Intensity_Gamma(Image &image)
 {
@@ -792,9 +807,12 @@ bool Posterize(Image &image, int numLevels)
 }
 
 /*
+ Function: Menu_Other_DisplayHistogram
  Author: Joe Manke
-
- Displays a histogram using the QtImageLib function.
+ Description:
+    Displays a histogram using the QtImageLib function.
+ in & out:
+    image - the image to generate the histogram of.
  */
 bool PointProcesses::Menu_Other_DisplayHistogram(Image &image)
 {
