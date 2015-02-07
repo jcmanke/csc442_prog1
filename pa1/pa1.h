@@ -29,7 +29,7 @@ class PointProcesses: public QObject
     bool Menu_Intensity_Compress(Image &image);
     bool Menu_Intensity_HistogramEqualization(Image &image);
     bool Menu_Intensity_HistogramEqualizationWithClipping(Image &image);
+    bool Menu_Intensity_Posterize(Image &image);
 
-    bool Menu_Other_Posterize(Image &image);
     bool Menu_Other_DisplayHistogram(Image &image);
 };

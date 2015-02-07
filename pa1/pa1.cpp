@@ -80,123 +80,6 @@ bool PointProcesses::Menu_Color_Negate(Image &image)
     }
     return true;
 }
-/*
- Function: Menu_Intensitiy_BinaryThreshold
- Author: Jonathan Tomes
-
- Description:
-     Handles the menu for binary thresholding and passes
-     it on to a method.
-
- in & out:
-    image - the image to manipulate.
- */
-bool PointProcesses::Menu_Intensity_BinaryThreshold(Image &image)
-{
-    int threshold = 0;
-    if(!Dialog("Binary Threshold").Add(threshold,"Threshold Value", 0, 255).Show())
-        return false;
-
-
-    return BinaryThreshold(image, threshold);
-}
-
-/*
- Function: BinaryThreshold
- Author: Jonathan Tomes
-
- Description:
-     Actual logic for the binary threshold manipulation.
-     Sets the intensity for values below a threshold to zero
-     and at the threshold and above to 255;
- in & out:
-     image - the image to manipulate
- in:
-     threshold - the cutoff intensity level
- */
-bool BinaryThreshold(Image &image, int threshold)
-{
-    uchar lut[256];
-
-    for(int i = 0; i<threshold; i++)
-    {
-        lut[i] = 0;
-    }
-
-    for(int i = threshold; i < 256; i++)
-    {
-        lut[i] = 255;
-    }
-
-    for(uint y =0; y < image.Height(); y++)
-    {
-        for(uint x = 0; x < image.Width(); x++)
-        {
-            image[y][x] = lut[image[y][x]];
-        }
-    }
-    return true;
-}
-/*
- Function:Menu_Other-Posterize
- Author: Jonathan Tomes
- Description:
-     Handles the menu for posterize, passing the number of levels
-     to the posterize function.
- in & out:
-     image - the image to manipulate.
- */
-bool PointProcesses::Menu_Other_Posterize(Image &image)
-{
-    int numLevels = 2;
-    if(!Dialog("Posterize")
-        .Add(numLevels, "Number of Levels", 2, 32).Show())
-        return false;
-
-    return Posterize(image, numLevels);
-}
-/*
- Function: Posterize
- Author: Jonathan Tomes
- Description:
-     Handels the actual posterizing of an image.
- in & out:
-     image - the image to manipulate
- */
-bool Posterize(Image &image, int numLevels)
-{
-    int numberPerLevel = 256.0/numLevels;
-
-    int scale = 0;
-    uchar lut[256];
-    int count = 0;
-
-    // initialize lut to 255.
-
-    for(int i = 0; i < 256; i++)
-    {
-        lut[i] = 255;
-    }
-
-    for(int i = 0; i < numLevels; i++)
-    {
-        for(int j = 0; j < numberPerLevel; j++)
-        {
-            lut[count] = scale;
-            count++;
-        }
-        scale += numberPerLevel;
-    }
-
-    for(uint y = 0; y < image.Height(); y++)
-    {
-        for(uint x = 0; x < image.Width(); x++)
-        {
-            image[y][x] = lut[image[y][x]];
-        }
-    }
-    return true;
-}
 
 /*
  Author: Joe Manke
@@ -230,87 +113,6 @@ bool PointProcesses::Menu_Color_Brighten(Image &image)
     {
         return false;
     }
-}
-/*
- Function: Menu_Intensity_Contrast
- Author: Jonathan Tomes
- Description:
-     Handles the menu operation for contrasting an image
-     getting the min and max values from the user
-     and sending it along to be processed.
-  in & out:
-    image - the image to manipulate
- */
-
-bool PointProcesses::Menu_Intensity_Contrast(Image &image)
-{
-    int iMin = 0;
-    int iMax = 255;
-    if(!Dialog("Contrast")
-        .Add(iMin, "Minium intensity", 0, 128)
-        .Add(iMax,"Maxium Intensity", 128, 255).Show())
-        return false;
-    return Contrast(image, iMin, iMax);
-}
-
-/*
- Author: Joe Manke
-
- Adjusts the image's intensity to by exponentiating each pixel's intensity
-    by a gamma value provided by the user.
- */
-bool PointProcesses::Menu_Intensity_Gamma(Image &image)
-{
-    double gamma = 0.5;
-
-    if(getParams(gamma))
-    {
-        for(uint y = 0; y < image.Height(); y++)
-        {
-            for(uint x = 0; x < image.Width(); x++)
-            {
-                int intensity = pow(image[y][x].Intensity() / 255.0, gamma) * 255;
-                image[y][x].SetIntensity(intensity);
-            }
-        }
-
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-/*
- Function: Menu_Intensity_Compress
- Author: Jonathan Tomes
- Description:
-     Adjusts the images intensity by a simple log function down into a meaningful range.
- in & out:
-    image - the image to manipulate
- */
-bool PointProcesses::Menu_Intensity_Compress(Image &image)
-{
-    int LUT[256];
-
-    for(int i = 0; i < 256; i++)
-    {
-        LUT[i] = log(i+1.0) * (255/log(256.0)) + 0.5;
-        if(LUT[i] > 255)
-            LUT[i] = 255;
-        if(LUT[i] < 0)
-            LUT[i] = 0;
-    }
-
-    for(unsigned int y = 0; y < image.Height(); y++)
-    {
-        for(unsigned int x = 0; x < image.Width(); x++)
-        {
-            image[y][x] = LUT[image[y][x]];
-        }
-    }
-    return true;
 }
 
 /*
@@ -417,8 +219,6 @@ bool PointProcesses::Menu_Color_ContinuousPseudocolor(Image &image)
     lutG[0] = 0;
     lutB[0] = 0;
 
-
-
     // set the remaining blue value
     int blue = 255;
     for(int i = 1; i < 126; i++)
@@ -496,13 +296,173 @@ bool PointProcesses::Menu_Color_ContinuousPseudocolor(Image &image)
 }
 
 /*
- Author: Joe Manke
-
- Displays a histogram using the QtImageLib function.
+ Function: Menu_Color_Decolorize
+ Authors: Jonathon Tomes, Joe Manke
+ Description:
+    Handles the menu logic for the Decolorize function.
+    Retrieves the percentages of red, green and blue values
+    to be removed from the image from the user.
+ in & out:
+    image - the image being manipulated.
  */
-bool PointProcesses::Menu_Other_DisplayHistogram(Image &image)
+bool PointProcesses::Menu_Color_Decolorize(Image &image)
 {
-    displayHistogram(image);
+    double percentRed = 0, percentGreen = 0, percentBlue = 0;
+    if(!Dialog("Decolorize")
+        .Add(percentRed, "Percent of red to remove from image", 0, 1.00)
+        .Add(percentGreen, "Percent of green to remove from image", 0, 1.00)
+        .Add(percentBlue, "Percent of blue to remove from image", 0, 1.00)
+        .Show())
+        return false;
+
+    return Decolorize(image, percentRed, percentGreen, percentBlue);
+}
+
+/*
+ Function: Decolorize
+ Authors: Jonathan Tomes, Joe Manke
+ Description:
+     Actual logic for decolorizing an image.
+ in & out:
+     image - the image being manipulated.
+ in:
+     percentRed - percentage of red to remove.
+     percentGreen - percentage of green to remove.
+     percentBlue - percentage of blue to remove.
+ */
+bool Decolorize(Image &image, double percentRed, double percentGreen, double percentBlue)
+{
+    for(uint y = 0; y < image.Height(); y++)
+    {
+        for(uint x = 0; x < image.Width(); x++)
+        {
+            Pixel pixel = image[y][x];
+
+            uchar red = pixel.Red() * (1.0 - percentRed);
+            uchar green = pixel.Green() * (1.0 - percentGreen);
+            uchar blue = pixel.Blue() * (1.0 - percentBlue);
+
+            image[y][x].SetRGB(red, green, blue);
+        }
+    }
+    return true;
+}
+
+/*
+ Function: Menu_Intensitiy_BinaryThreshold
+ Author: Jonathan Tomes
+
+ Description:
+     Handles the menu for binary thresholding and passes
+     it on to a method.
+
+ in & out:
+    image - the image to manipulate.
+ */
+bool PointProcesses::Menu_Intensity_BinaryThreshold(Image &image)
+{
+    int threshold = 0;
+    if(!Dialog("Binary Threshold").Add(threshold,"Threshold Value", 0, 255).Show())
+        return false;
+
+
+    return BinaryThreshold(image, threshold);
+}
+
+/*
+ Function: BinaryThreshold
+ Author: Jonathan Tomes
+
+ Description:
+     Actual logic for the binary threshold manipulation.
+     Sets the intensity for values below a threshold to zero
+     and at the threshold and above to 255;
+ in & out:
+     image - the image to manipulate
+ in:
+     threshold - the cutoff intensity level
+ */
+bool BinaryThreshold(Image &image, int threshold)
+{
+    uchar lut[256];
+
+    for(int i = 0; i<threshold; i++)
+    {
+        lut[i] = 0;
+    }
+
+    for(int i = threshold; i < 256; i++)
+    {
+        lut[i] = 255;
+    }
+
+    for(uint y =0; y < image.Height(); y++)
+    {
+        for(uint x = 0; x < image.Width(); x++)
+        {
+            image[y][x] = lut[image[y][x]];
+        }
+    }
+    return true;
+}
+
+/*
+ Function: Menu_Intensity_Contrast
+ Author: Jonathan Tomes
+ Description:
+     Handles the menu operation for contrasting an image
+     getting the min and max values from the user
+     and sending it along to be processed.
+  in & out:
+    image - the image to manipulate
+ */
+bool PointProcesses::Menu_Intensity_Contrast(Image &image)
+{
+    int iMin = 0;
+    int iMax = 255;
+    if(!Dialog("Contrast")
+        .Add(iMin, "Minium intensity", 0, 128)
+        .Add(iMax,"Maxium Intensity", 128, 255).Show())
+        return false;
+    return Contrast(image, iMin, iMax);
+}
+
+/*
+ Function: Contrast
+ Author: Jonathan Tomes
+ Description:
+     A method to modify the contrast of an image
+     by doing a contrast by the given iMin and iMax.
+ in & out:
+     image - the image being manipulated.
+ */
+bool Contrast(Image &image, int iMin, int iMax)
+{
+    double scale = 255.0/(iMax - iMin);
+    uchar lut[256];
+
+    for(int i = 0; i < 256; i++)
+    {
+        int intensity = scale *(i - iMin);
+        if(intensity < 0)
+        {
+            intensity = 0;
+        }
+        if(intensity > 255)
+        {
+            intensity = 255;
+        }
+        lut[i] = intensity;
+    }
+
+    for(uint y = 0; y < image.Height(); y++)
+    {
+        for(uint x = 0; x < image.Width(); x++)
+        {
+            image[y][x] = lut[image[y][x].Intensity()];
+        }
+    }
+
     return true;
 }
 
@@ -542,6 +502,7 @@ bool PointProcesses::Menu_Intensity_AutomatedContrastStretch(Image &image)
 
     return true;
 }
+
 /*
  Function: Menu_Intensity_ModifiedContrastStretch
  Author: Jonathan Tomes
@@ -600,42 +561,64 @@ bool PointProcesses::Menu_Intensity_ModifiedContrastStretch(Image &image)
 
     return true;
 }
+
 /*
- Function: Contrast
+ Author: Joe Manke
+
+ Adjusts the image's intensity to by exponentiating each pixel's intensity
+    by a gamma value provided by the user.
+ */
+bool PointProcesses::Menu_Intensity_Gamma(Image &image)
+{
+    double gamma = 0.5;
+
+    if(getParams(gamma))
+    {
+        for(uint y = 0; y < image.Height(); y++)
+        {
+            for(uint x = 0; x < image.Width(); x++)
+            {
+                int intensity = pow(image[y][x].Intensity() / 255.0, gamma) * 255;
+                image[y][x].SetIntensity(intensity);
+            }
+        }
+
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+/*
+ Function: Menu_Intensity_Compress
  Author: Jonathan Tomes
  Description:
-     A method to modify the contrast of an image
-     by doing a contrast by the given iMin and iMax.
+     Adjusts the images intensity by a simple log function down into a meaningful range.
  in & out:
-     image - the image being manipulated.
+    image - the image to manipulate
  */
-bool Contrast(Image &image, int iMin, int iMax)
+bool PointProcesses::Menu_Intensity_Compress(Image &image)
 {
-    double scale = 255.0/(iMax - iMin);
-    uchar lut[256];
+    int LUT[256];
 
     for(int i = 0; i < 256; i++)
     {
-        int intensity = scale *(i - iMin);
-        if(intensity < 0)
-        {
-            intensity = 0;
-        }
-        if(intensity > 255)
-        {
-            intensity = 255;
-        }
-        lut[i] = intensity;
+        LUT[i] = log(i+1.0) * (255/log(256.0)) + 0.5;
+        if(LUT[i] > 255)
+            LUT[i] = 255;
+        if(LUT[i] < 0)
+            LUT[i] = 0;
     }
 
-    for(uint y = 0; y < image.Height(); y++)
+    for(unsigned int y = 0; y < image.Height(); y++)
     {
-        for(uint x = 0; x < image.Width(); x++)
+        for(unsigned int x = 0; x < image.Width(); x++)
         {
-            image[y][x] = lut[image[y][x].Intensity()];
+            image[y][x] = LUT[image[y][x]];
         }
     }
-
     return true;
 }
 
@@ -682,6 +665,7 @@ bool PointProcesses::Menu_Intensity_HistogramEqualization(Image &image)
 
     return true;
 }
+
 /*
  Function: Menu_Intensity_HistogramEqualizationWithClipping
  Author: Jonathan Tomes
@@ -746,53 +730,74 @@ bool PointProcesses::Menu_Intensity_HistogramEqualizationWithClipping(Image &ima
 }
 
 /*
- Function: Menu_Color_Decolorize
- Authors: Jonathon Tomes, Joe Manke
+ Function:Menu_Other-Posterize
+ Author: Jonathan Tomes
  Description:
-    Handles the menu logic for the Decolorize function.
-    Retrieves the percentages of red, green and blue values
-    to be removed from the image from the user.
+     Handles the menu for posterize, passing the number of levels
+     to the posterize function.
  in & out:
-    image - the image being manipulated.
+     image - the image to manipulate.
  */
-bool PointProcesses::Menu_Color_Decolorize(Image &image)
+bool PointProcesses::Menu_Intensity_Posterize(Image &image)
 {
-    double percentRed = 0, percentGreen = 0, percentBlue = 0;
-    if(!Dialog("Decolorize")
-        .Add(percentRed, "Percent of red to remove from image", 0, 1.00)
-        .Add(percentGreen, "Percent of green to remove from image", 0, 1.00)
-        .Add(percentBlue, "Percent of blue to remove from image", 0, 1.00)
-        .Show())
+    int numLevels = 2;
+    if(!Dialog("Posterize")
+        .Add(numLevels, "Number of Levels", 2, 32).Show())
         return false;
 
-    return Decolorize(image, percentRed, percentGreen, percentBlue);
+    return Posterize(image, numLevels);
 }
+
 /*
- Function: Decolorize
- Authors: Jonathan Tomes, Joe Manke
+ Function: Posterize
+ Author: Jonathan Tomes
  Description:
-     Actual logic for decolorizing an image.
+     Handels the actual posterizing of an image.
  in & out:
-     image - the image being manipulated.
- in:
-     percentRed - percentage of red to remove.
-     percentGreen - percentage of green to remove.
-     percentBlue - percentage of blue to remove.
+     image - the image to manipulate
  */
-bool Decolorize(Image &image, double percentRed, double percentGreen, double percentBlue)
+bool Posterize(Image &image, int numLevels)
 {
+    int numberPerLevel = 256.0/numLevels;
+
+    int scale = 0;
+    uchar lut[256];
+    int count = 0;
+
+    // initialize lut to 255.
+
+    for(int i = 0; i < 256; i++)
+    {
+        lut[i] = 255;
+    }
+
+    for(int i = 0; i < numLevels; i++)
+    {
+        for(int j = 0; j < numberPerLevel; j++)
+        {
+            lut[count] = scale;
+            count++;
+        }
+        scale += numberPerLevel;
+    }
+
     for(uint y = 0; y < image.Height(); y++)
     {
         for(uint x = 0; x < image.Width(); x++)
         {
-            Pixel pixel = image[y][x];
-
-            uchar red = pixel.Red() * (1.0 - percentRed);
-            uchar green = pixel.Green() * (1.0 - percentGreen);
-            uchar blue = pixel.Blue() * (1.0 - percentBlue);
-
-            image[y][x].SetRGB(red, green, blue);
+            image[y][x] = lut[image[y][x]];
         }
     }
+    return true;
+}
+
+/*
+ Author: Joe Manke
+
+ Displays a histogram using the QtImageLib function.
+ */
+bool PointProcesses::Menu_Other_DisplayHistogram(Image &image)
+{
+    displayHistogram(image);
     return true;
 }
